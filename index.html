@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sonnenlicht trifft die Erde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: klar, ruhig, für Klasse 7, große Ziele zum Tippen
+   IDEA: ein Messversuch auf Karopapier, wie im Heft
+   PICTURE: links die Erde von der Seite mit parallelen Strahlen, rechts der Boden mit Lichtfleck
+   COLOUR and TYPE: Sonnengelb als Akzent, Ozeanblau, Tinte auf Weiß; Atkinson Hyperlegible
+   LAYOUT: Titel und Anleitung, darunter zwei Bilder nebeneinander, Ortsknöpfe, Messwert */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0e1626);--ink:light-dark(#14181f,#eef2f7);--soft:light-dark(#5b6472,#a9b4c4);
+--sun:#ffbf1f;--sunDeep:light-dark(#e08a00,#ffcf4d);--ocean:light-dark(#1f6fd1,#2f7fe0);--night:rgba(0,0,0,.38);
+--line:light-dark(#c9d1dc,#33405a);--card:light-dark(#f4f7fb,#16213a);--grid:light-dark(#9aa6b6,#4d5d7a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,3vw,40px) max(4vw,16px);max-width:1240px;margin:0 auto}
+h1{font-size:clamp(28px,4vw,44px);line-height:1.08;margin:0 0 10px;text-wrap:balance}
+p{margin:0 0 10px;max-width:70ch}
+ol{margin:6px 0 0;padding-left:1.4em}ol li{margin:2px 0}
+.intro{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start}
+.note{background:var(--card);border-radius:12px;padding:14px 16px;font-size:16px}
+.note b{color:var(--sunDeep)}
+.figs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;margin-top:18px}
+.panel{background:var(--card);border-radius:16px;padding:12px 12px 8px}
+.panel h2{font-size:18px;margin:2px 4px 6px}
+.panel p{font-size:15px;color:var(--soft);margin:4px 4px 6px}
+svg{width:100%;height:auto;display:block}
+.places{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+button{font:inherit;font-size:17px;min-height:48px;padding:8px 18px;border-radius:999px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button[aria-pressed=true]{background:var(--sun);border-color:var(--sun);color:#14181f;font-weight:700}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--ocean);outline-offset:2px}
+button small{font-weight:400;opacity:.8}
+.result{margin-top:16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-items:center}
+.vals{font-size:18px}.vals div{margin:2px 0}
+.bar{height:18px;border-radius:9px;background:var(--line);overflow:hidden;max-width:360px}
+.bar i{display:block;height:100%;background:var(--sun);transition:width .4s}
+.hidden{visibility:hidden}
+details{margin-top:18px;background:var(--card);border-radius:12px;padding:10px 16px}
+summary{cursor:pointer;font-weight:700;min-height:32px}
+input[type=range]{width:min(100%,420px);height:44px;accent-color:var(--sunDeep)}
+.src{font-size:13px;color:var(--soft);margin-top:18px}
+.ray{stroke:var(--sun);stroke-width:2;opacity:.45}
+.rayOn{stroke:var(--sunDeep);stroke-width:4}
+.lbl{fill:var(--ink);font:600 14px "Atkinson Hyperlegible",system-ui,sans-serif}
+.lblW{fill:#fff;font:600 13px "Atkinson Hyperlegible",system-ui,sans-serif}
+.num{fill:var(--soft);font:13px "Atkinson Hyperlegible",system-ui,sans-serif}
+@media(max-width:800px){.intro,.figs{grid-template-columns:minmax(0,1fr)}.result{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main class="band">
+<div class="intro">
+<div>
+<h1>Wie trifft das Sonnenlicht auf die Erde?</h1>
+<p>Die Sonne ist sehr weit weg. Deshalb kommen ihre Strahlen fast parallel bei der Erde an.</p>
+<ol>
+<li>Tippe unten auf einen Ort.</li>
+<li>Schau rechts: Ein Lichtbündel trifft dort auf den Boden. Es ist immer gleich breit.</li>
+<li>Zähle, wie viele Kästchen der Lichtfleck lang ist.</li>
+<li>Trage die Zahl in deine Tabelle ein.</li>
+</ol>
+</div>
+<div class="note"><b>Modell:</b> So steht die Sonne im März und im September. Was im Sommer und im Winter anders ist, lernst du später.</div>
+</div>
+
+<div class="places" id="places"></div>
+
+<div class="figs">
+<div class="panel">
+<h2>Die Erde von der Seite</h2>
+<svg id="globe" viewBox="0 0 420 340" role="img" aria-label="Die Erde von der Seite mit parallelen Sonnenstrahlen"></svg>
+<p>Der gelbe Strahl zeigt deinen Ort. Die schwarze Linie ist dort der Boden.</p>
+</div>
+<div class="panel">
+<h2>Nahansicht: der Boden an deinem Ort</h2>
+<svg id="ground" viewBox="0 0 520 280" role="img" aria-label="Lichtbündel trifft auf Karopapier"></svg>
+<p>Das Lichtbündel ist überall 2 Kästchen breit. Zähle ab der Zahl 1.</p>
+</div>
+</div>
+
+<div class="result">
+<button id="toggle" aria-pressed="false">Messwert zeigen</button>
+<div class="vals hidden" id="vals">
+<div id="v1"></div>
+<div id="v2"></div>
+<div class="bar" aria-hidden="true"><i id="barI"></i></div>
+<div class="num" style="font-size:14px">100 % bedeutet: Die Sonne steht senkrecht.</div>
+<div id="v3"></div>
+</div>
+</div>
+
+<details>
+<summary>Profi: Wähle selbst einen Ort auf der Nordhalbkugel</summary>
+<p>Schiebe den Regler. Wo wird der Lichtfleck am längsten? Was bedeutet das für die Wärme?</p>
+<label for="lat">Abstand vom Äquator: <b id="latOut">30° N</b></label><br>
+<input type="range" id="lat" min="0" max="80" step="1" value="30">
+</details>
+
+<p class="src">Breitengrade gerundet: Manaus 3° S, Neapel 41° N, Bremen 53° N, Spitzbergen (Longyearbyen) 78° N. Vereinfachtes Modell für den Unterricht, Erde nicht maßstabsgetreu.</p>
+</main>
+
+<script>
+{
+const P=[{n:'Manaus',lat:-3.1,l:'3° S'},{n:'Neapel',lat:40.85,l:'41° N'},{n:'Bremen',lat:53.08,l:'53° N'},{n:'Spitzbergen',lat:78.22,l:'78° N'}];
+let cur={n:'Bremen',lat:53.08,custom:false};
+let show=false;
+const rad=d=>d*Math.PI/180;
+const fmt=x=>x.toFixed(1).replace('.',',');
+const g=document.getElementById('globe'),gr=document.getElementById('ground');
+const placesEl=document.getElementById('places');
+
+placesEl.innerHTML=P.map((p,i)=>`<button data-i="${i}" aria-pressed="false">${p.n} <small>${p.l}</small></button>`).join('');
+
+function drawGlobe(){
+  const cx=250,cy=170,R=120;
+  let s=`<defs><radialGradient id="sg"><stop offset="0" stop-color="#fff3b0"/><stop offset=".6" stop-color="#ffbf1f"/><stop offset="1" stop-color="#ffbf1f" stop-opacity="0"/></radialGradient></defs>`;
+  s+=`<circle cx="-30" cy="${cy}" r="95" fill="url(#sg)"/><text x="8" y="${cy+5}" class="lbl" style="fill:#5a3b00">Sonne</text>`;
+  for(let y=cy-R+12;y<=cy+R-12;y+=20){const x2=cx-Math.sqrt(R*R-(y-cy)**2);s+=`<line class="ray" x1="70" y1="${y}" x2="${x2}" y2="${y}"/>`;}
+  s+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="var(--ocean)"/>`;
+  s+=`<path d="M${cx},${cy-R} A${R},${R} 0 0 1 ${cx},${cy+R} Z" fill="var(--night)"/>`;
+  s+=`<line x1="${cx}" y1="${cy-R-16}" x2="${cx}" y2="${cy+R+16}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 5"/>`;
+  s+=`<text x="${cx+8}" y="${cy-R-4}" class="lbl">N</text><text x="${cx+8}" y="${cy+R+16}" class="lbl">S</text>`;
+  s+=`<line x1="${cx-R}" y1="${cy}" x2="${cx+R}" y2="${cy}" stroke="#fff" stroke-width="2"/>`;
+  s+=`<text x="${cx+R-10}" y="${cy-7}" text-anchor="end" class="lblW">Äquator</text>`;
+  const pts=P.map(p=>({n:p.n,lat:p.lat}));
+  if(cur.custom)pts.push({n:'Dein Ort',lat:cur.lat});
+  for(const p of pts){
+    const f=rad(p.lat),px=cx-R*Math.cos(f),py=cy-R*Math.sin(f);
+    const on=p.n===cur.n;
+    if(on){
+      const tx=Math.sin(f),ty=-Math.cos(f);
+      s+=`<line class="rayOn" x1="70" y1="${py}" x2="${px}" y2="${py}"/>`;
+      s+=`<line x1="${px-30*tx}" y1="${py-30*ty}" x2="${px+30*tx}" y2="${py+30*ty}" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>`;
+    }
+    s+=`<circle cx="${px}" cy="${py}" r="${on?7:5}" fill="${on?'var(--sun)':'#fff'}" stroke="var(--ink)" stroke-width="2"/>`;
+    s+=p.lat>65?`<text x="${px-12}" y="${py-8}" text-anchor="end" class="lbl">${p.n}</text>`:`<text x="${px+12}" y="${py+5}" class="lblW">${p.n}</text>`;
+  }
+  g.innerHTML=s;
+}
+
+function drawGround(){
+  const a=90-Math.abs(cur.lat),sa=Math.sin(rad(a)),ca=Math.cos(rad(a));
+  const cell=30,x0=140,gy=200,L=2*cell/sa,far=1400;
+  let s=`<defs><clipPath id="sky"><rect x="0" y="0" width="520" height="${gy}"/></clipPath>
+  <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--sunDeep)"/></marker></defs>`;
+  const bx=-ca*far,by=-sa*far;
+  s+=`<g clip-path="url(#sky)"><polygon points="${x0},${gy} ${x0+L},${gy} ${x0+L+bx},${gy+by} ${x0+bx},${gy+by}" fill="var(--sun)" opacity=".35"/>`;
+  for(const t of [.2,.5,.8]){const xs=x0+t*L;s+=`<line x1="${xs+bx*.3}" y1="${gy+by*.3}" x2="${xs-ca*4}" y2="${gy-sa*4}" stroke="var(--sunDeep)" stroke-width="2.5" marker-end="url(#ar)"/>`;}
+  s+=`</g>`;
+  for(let i=0;i<16;i++){
+    const x=20+i*cell,ov=Math.max(0,Math.min(x+cell,x0+L)-Math.max(x,x0));
+    s+=`<rect x="${x}" y="${gy}" width="${cell}" height="${cell}" fill="var(--bg)" stroke="var(--grid)" stroke-width="1"/>`;
+    if(ov>0)s+=`<rect x="${Math.max(x,x0)}" y="${gy}" width="${ov}" height="${cell}" fill="var(--sun)" fill-opacity="${(.25+.75*sa).toFixed(2)}"/>`;
+    if(x>=x0)s+=`<text x="${x+cell/2}" y="${gy+cell+20}" text-anchor="middle" class="num">${(x-x0)/cell+1}</text>`;
+  }
+  s+=`<line x1="20" y1="${gy}" x2="500" y2="${gy}" stroke="var(--ink)" stroke-width="3"/>`;
+  s+=`<text x="20" y="22" class="lbl">${cur.n}</text>`;
+  gr.innerHTML=s;
+  document.getElementById('v1').textContent=`Lichtfleck: ${fmt(L/cell)} Kästchen lang`;
+  document.getElementById('v2').textContent=`Licht pro Kästchen: ${Math.round(sa*100)} %`;
+  document.getElementById('barI').style.width=(sa*100)+'%';
+  document.getElementById('v3').textContent=`Die Sonne steht mittags ${Math.round(a)}° hoch.`;
+}
+
+function render(){
+  for(const b of placesEl.querySelectorAll('button'))b.setAttribute('aria-pressed',String(!cur.custom&&P[+b.dataset.i].n===cur.n));
+  drawGlobe();drawGround();
+}
+
+placesEl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const p=P[+b.dataset.i];cur={n:p.n,lat:p.lat,custom:false};render();});
+const tog=document.getElementById('toggle'),vals=document.getElementById('vals');
+tog.addEventListener('click',()=>{show=!show;vals.classList.toggle('hidden',!show);tog.textContent=show?'Messwert verbergen':'Messwert zeigen';tog.setAttribute('aria-pressed',String(show));});
+const lat=document.getElementById('lat'),latOut=document.getElementById('latOut');
+lat.addEventListener('input',()=>{latOut.textContent=lat.value+'° N';cur={n:'Dein Ort',lat:+lat.value,custom:true};render();});
+render();
+}
+</script>
+</body>
+</html>
